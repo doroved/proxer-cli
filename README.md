@@ -1,6 +1,7 @@
 # Proxer
 
-Proxy manager all network requests on macOS + spoofDPI all direct connections. Currently works only with IPv4 HTTP(S) proxies.
+Network request proxy manager on macOS + spoofDPI direct connections. Currently only works with IPv4 HTTP(S) proxies.
+Currently works only with IPv4 HTTP(S) proxies.
 
 ![proxer screenshot](screenshot.png)
 
