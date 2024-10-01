@@ -41,9 +41,3 @@ nohup ./target/release/proxer >/dev/null 2>&1 &
 ```bash
 kill $(pgrep proxer)
 ```
-
-## Change Log
-
-**v0.1.1** - Oct 01, 2024
-
-- Fixed a bug in `package_info()`, the application would close if the binary was started without the Cargo.toml file nearby, now the data from Cargo.toml is loaded into the binary.
