@@ -34,7 +34,7 @@
   },
   {
     name: "My dumbproxy [DE]",
-    enabled: true,
+    enabled: false,
     scheme: "HTTP",
     host: "91.201.153.132",
     port: 8080,
