@@ -5,6 +5,7 @@ Proxy manager all network requests on macOS + spoofDPI all direct connections. C
 ![proxer screenshot](screenshot.png)
 
 ## How to use
+
 1. Clone the repository.
 
 ```bash
@@ -40,3 +41,9 @@ nohup ./target/release/proxer >/dev/null 2>&1 &
 ```bash
 kill $(pgrep proxer)
 ```
+
+## Change Log
+
+**v0.1.1** - Oct 01, 2024
+
+- Fixed a bug in `package_info()`, the application would close if the binary was started without the Cargo.toml file nearby, now the data from Cargo.toml is loaded into the binary.
