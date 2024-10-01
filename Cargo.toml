@@ -1,0 +1,36 @@
+[package]
+name = "proxer"
+version = "0.1.0"
+edition = "2021"
+authors = ["doroved"]
+description = "Proxy manager all network requests on macOS + spoofDPI all direct connections."
+readme = "README.md"
+repository = "https://github.com/doroved/proxer"
+license = "MIT OR Apache-2.0"
+keywords = ["proxy", "spoof", "spoofdpi", "macos", "macos-proxy"]
+categories = ["network-programming", "command-line-utilities"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+base64 = "0.22.1"
+# hyper = { version = "1.4.1", features = ["full"] }
+hyper = { version = "0.14", features = ["full"] }
+serde = { version = "1.0.210", features = ["derive"] }
+tokio = { version = "1.40.0", features = ["full"] }
+tokio-native-tls = "0.3.1"
+toml = "0.8.19"
+port_check = "0.2.1"
+signal-hook = "0.3.17"
+signal-hook-tokio = { version = "0.3.1", features = ["futures-v0_3"] }
+futures = "0.3.30"
+wildmatch = "2.3.4"
+json5 = "0.4.1"
+chrono = "0.4.38"
+
+[profile.release]
+panic = "abort"   # Strip expensive panic clean-up logic
+codegen-units = 1 # Compile crates one after another so the compiler can optimize better
+lto = true        # Enables link to optimizations
+opt-level = "z"   # Optimize for binary size s = 1.4 mb | z = 1.2 mb
+strip = true      # Remove debug symbols
