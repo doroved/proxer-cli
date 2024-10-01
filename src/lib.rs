@@ -232,11 +232,10 @@ pub fn get_default_interface() -> String {
 }
 
 fn package_info() -> Package {
-    // Read the Cargo.toml file
-    let content = fs::read_to_string("Cargo.toml").expect("Не удалось прочитать Cargo.toml");
+    let content = include_str!("../Cargo.toml");
 
     // Parse the content of the file
-    let cargo: CargoToml = from_str(&content).expect("Ошибка парсинга Cargo.toml");
+    let cargo: CargoToml = from_str(&content).expect("Error parsing Cargo.toml");
 
     // Return the package information
     cargo.package
