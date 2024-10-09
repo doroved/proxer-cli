@@ -41,3 +41,8 @@ nohup ./target/release/proxer >/dev/null 2>&1 &
 ```bash
 kill $(pgrep proxer)
 ```
+
+## Interesting projects
+
+- [SpoofDPI](https://github.com/xvzc/SpoofDPI) - macOS
+- [GoodbyeDPI](https://github.com/ValdikSS/GoodbyeDPI) - Windows
