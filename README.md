@@ -46,3 +46,4 @@ kill $(pgrep proxer)
 
 - [SpoofDPI](https://github.com/xvzc/SpoofDPI) - macOS
 - [GoodbyeDPI](https://github.com/ValdikSS/GoodbyeDPI) - Windows
+- [DumbProxy](https://github.com/SenseUnit/dumbproxy) - Great proxy server with various features
