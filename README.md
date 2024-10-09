@@ -44,6 +44,7 @@ kill $(pgrep proxer)
 
 ## Interesting projects
 
+- [DumbProxy](https://github.com/SenseUnit/dumbproxy) - Great proxy server with various features
 - [SpoofDPI](https://github.com/xvzc/SpoofDPI) - macOS
 - [GoodbyeDPI](https://github.com/ValdikSS/GoodbyeDPI) - Windows
-- [DumbProxy](https://github.com/SenseUnit/dumbproxy) - Great proxy server with various features
+- [ByeDPI](https://github.com/hufrea/byedpi) - Windows, Linux
