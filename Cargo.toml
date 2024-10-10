@@ -27,6 +27,8 @@ futures = "0.3.30"
 wildmatch = "2.3.4"
 json5 = "0.4.1"
 chrono = "0.4.38"
+libc = "0.2.159"
+rand = "0.8.5"
 
 [profile.release]
 panic = "abort"   # Strip expensive panic clean-up logic
