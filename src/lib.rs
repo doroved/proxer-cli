@@ -334,7 +334,7 @@ where
     let mut response = [0u8; 1024];
     let n = timeout(Duration::from_secs(5), stream.read(&mut response)).await??;
 
-    if !response[..n].starts_with(b"HTTP/1.1 200") {
+    if !response[..n].windows(3).any(|window| window == b"200") {
         return Err(format!(
             "Proxy connection failed: {:?}",
             String::from_utf8_lossy(&response[..n])
