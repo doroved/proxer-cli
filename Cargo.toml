@@ -1,9 +1,9 @@
 [package]
 name = "proxer"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 authors = ["doroved"]
-description = "Proxy manager all network requests on macOS + spoofDPI all direct connections."
+description = "Proxy all macOS network requests with domain-based filtering. Basic spoof DPI for direct connections."
 readme = "README.md"
 repository = "https://github.com/doroved/proxer"
 license = "MIT OR Apache-2.0"
@@ -27,6 +27,23 @@ futures = "0.3.30"
 wildmatch = "2.3.4"
 json5 = "0.4.1"
 chrono = "0.4.38"
+clap = { version = "4.5.20", features = ["derive"] }
+sha2 = "0.10.8"
+lazy_static = "1.5.0"
+# simple-home-dir = "0.4.3"
+hyper-tls = "0.6.0"
+hyper-proxy = "0.9.1"
+# hyper-util = "0.1.9"
+# http-body-util = "0.1.2"
+# bytes = "1.7.2"
+# hyper-tls = "0.5"
+# hyper-proxy = "0.7"
+# Ошибка с этой версией
+# headers = "0.4.0"
+# headers = "0.3.0"
+# reqwest = "0.12.8"
+# hyper-proxy2 = "0.1.0"
+# hyper-http-proxy = "1.0.0"
 
 [profile.release]
 panic = "abort"   # Strip expensive panic clean-up logic
