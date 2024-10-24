@@ -1,6 +1,6 @@
 # Proxer
 
-**Subscribe to us on [Telegram](https://t.me/macproxer) to receive notifications about new versions and updates.**
+>**Subscribe to us on [Telegram](https://t.me/macproxer) to receive notifications about new versions and updates.**
 
 Network request proxy manager with host filtering on macOS + spoofDPI direct connections. Currently works only with IPv4 HTTP(S) proxies.
 
