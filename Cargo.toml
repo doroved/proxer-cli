@@ -1,6 +1,6 @@
 [package]
 name = "proxer"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["doroved"]
 description = "Proxy all macOS network requests with domain-based filtering. Basic spoof DPI for direct connections."

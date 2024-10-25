@@ -92,16 +92,16 @@ pub async fn handle_request(
     let found_proxy = find_matching_proxy(config.as_ref(), host);
 
     if req.method() == Method::CONNECT {
-        if let Some(_) = req.uri().authority().map(|auth| auth.to_string()) {
+        if req.uri().authority().map(|auth| auth.to_string()).is_some() {
             tokio::spawn(async move {
                 match tunnel(req, found_proxy.clone()).await {
                     Ok(_) => {}
                     Err(e) => {
                         let error_msg = e.to_string();
 
-                        if options.log_error_all {
-                            eprintln!("\x1B[31m\x1B[1m[{time}] {addr} → {error_msg}\x1B[0m");
-                        } else if error_msg.contains("os error 60")
+                        // Combined error logging condition
+                        if options.log_error_all
+                            || error_msg.contains("os error 60")
                             || error_msg.contains("Proxy connection failed")
                             || error_msg.contains("deadline has elapsed")
                         {
@@ -256,7 +256,7 @@ async fn tunnel(
             _ => return Err(format!("Unsupported proxy scheme: {}", proxy.scheme).into()),
         }
 
-        return Ok(());
+        Ok(())
     } else {
         println!("\x1b[1m[{time}] {addr} → Direct connection\x1b[0m");
 
@@ -311,7 +311,7 @@ async fn tunnel(
         // Wait for both tasks to complete
         tokio::try_join!(client_to_server, server_to_client)?;
 
-        return Ok(());
+        Ok(())
     }
 }
 
@@ -331,7 +331,7 @@ fn package_info() -> Package {
     let content = include_str!("../Cargo.toml");
 
     // Parse the content of the file
-    let cargo: CargoToml = from_str(&content).expect("Error parsing Cargo.toml");
+    let cargo: CargoToml = from_str(content).expect("Error parsing Cargo.toml");
 
     // Return the package information
     cargo.package
@@ -340,7 +340,7 @@ fn package_info() -> Package {
 // Kill all proxer processes
 pub fn terminate_proxer() {
     let _ = Command::new("sh")
-        .args(&["-c", "kill $(pgrep proxer)"])
+        .args(["-c", "kill $(pgrep proxer)"])
         .output()
         .expect("Failed to execute `kill $(pgrep proxer)` command to terminate proxer processes");
 }
@@ -403,7 +403,7 @@ async fn handle_http_proxy(
     addr: &str,
     proxy: &ProxyConfig,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    send_connect_request(req, &mut tcp_stream, addr, &proxy).await?;
+    send_connect_request(req, &mut tcp_stream, addr, proxy).await?;
     Ok(())
 }
 
@@ -420,7 +420,7 @@ async fn handle_https_proxy(
     )
     .await??;
 
-    send_connect_request(req, &mut tls_stream, addr, &proxy).await?;
+    send_connect_request(req, &mut tls_stream, addr, proxy).await?;
     Ok(())
 }
 
@@ -517,7 +517,7 @@ impl Proxy {
                     &self.server,
                     &self.port.to_string(),
                 ])
-                .expect(&format!("Failed to set {proxy_type}"));
+                .unwrap_or_else(|_| panic!("Failed to set {proxy_type}"));
         }
     }
 
@@ -533,7 +533,7 @@ impl Proxy {
 
             let _ = self
                 .execute_command(&[&command, &self.interface, proxy_state])
-                .expect(&format!("Failed to set {proxy_type} state"));
+                .unwrap_or_else(|_| panic!("Failed to set {proxy_type} state"));
         }
     }
 

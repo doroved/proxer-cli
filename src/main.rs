@@ -39,9 +39,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let config = fs::read_to_string(&config_file)
-        .expect(format!("Failed to read config file: {config_file}").as_str());
+        .unwrap_or_else(|_| panic!("Failed to read config file: {config_file}"));
     let parsed_config: Vec<ProxyConfig> = json5::from_str(&config)
-        .expect(format!("Failed to parse config file: {config_file}").as_str());
+        .unwrap_or_else(|_| panic!("Failed to parse config file: {config_file}"));
     let shared_config = Arc::new(parsed_config);
 
     // Run ping proxy in loop
@@ -76,12 +76,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let system_proxy_arc = Arc::new(system_proxy);
 
     // Set up signal handling
-    let mut signals = Signals::new(&[SIGINT, SIGTERM, SIGQUIT])?;
+    let mut signals = Signals::new([SIGINT, SIGTERM, SIGQUIT])?;
     let handle = signals.handle();
 
     // Start signal handler in a separate task
     let signals_task = tokio::spawn(async move {
-        while let Some(signal) = signals.next().await {
+        if let Some(signal) = signals.next().await {
             match signal {
                 SIGINT | SIGTERM | SIGQUIT => {
                     system_proxy_arc.set_state(ProxyState::Off);
