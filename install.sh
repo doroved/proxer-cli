@@ -47,8 +47,11 @@ if [ $? -ne 0 ]; then
     exit
 fi
 
-# Remove the quarantine attribute from the proxer executable to allow it to run without restrictions
-xattr -d com.apple.quarantine ~/.proxer/bin/proxer
+# Check if quarantine attribute exists before trying to remove it
+if xattr ~/.proxer/bin/proxer | grep -q "com.apple.quarantine"; then
+    xattr -d com.apple.quarantine ~/.proxer/bin/proxer
+    echo "Removed quarantine attribute from ~/.proxer/bin/proxer"
+fi
 
 # Check if config.json5 exists, if not, create it
 if [ ! -f ~/.proxer/config.json5 ]; then
@@ -96,21 +99,21 @@ fi
 # Add to PATH
 export PATH=$PATH:~/.proxer/bin
 
-# Check for .bashrc and .zshrc and append PATH export if they exist
+# Check for shell config files and update PATH
 if [ -f ~/.bashrc ]; then
     update_path ~/.bashrc
-fi
-
-if [ -f ~/.zshrc ]; then
+elif [ -f ~/.zshrc ]; then
     update_path ~/.zshrc
+elif [ -f ~/.bash_profile ]; then
+    update_path ~/.bash_profile
 fi
 
 # Success message with version
 proxer_version=$(proxer -V)
-echo ""
 echo "Successfully installed $proxer_version"
 
 # Run the proxer help command
+echo ""
 proxer --help
 echo ""
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
