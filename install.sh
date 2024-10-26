@@ -8,8 +8,8 @@ if [[ "$arch" != "x86_64" && "$arch" != "arm64" ]]; then
 fi
 
 # Determine the appropriate architecture for the orb command
-if [ "$arch" = "aarch64" ]; then
-    short_arch="arm64"
+if [ "$arch" = "arm64" ]; then
+    short_arch="aarch64"
 else
     short_arch="x86_64"
 fi
