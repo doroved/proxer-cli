@@ -70,7 +70,7 @@ if [ ! -f ~/.proxer/config.json5 ]; then
     "filter": [
       {
         "name": "YouTube",
-        "domains": ["*.youtube.com", "*.googlevideo.com", "*.ggpht.com"]
+        "domains": ["*.youtube.com", "*.googlevideo.com", "*.ggpht.com", "*.ytimg.com", "youtu.be"]
       },
       {
         "name": "Discord",
