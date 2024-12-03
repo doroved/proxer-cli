@@ -17,9 +17,9 @@ fi
 # Function to add PATH to the configuration file
 update_path() {
     local rc_file=$1
-    if ! grep -q "export PATH=.*proxer/bin" "$rc_file"; then
+    if ! grep -q "export PATH=.*proxer-cli/bin" "$rc_file"; then
         echo "# Proxer" >> "$rc_file"
-        echo "export PATH=\$PATH:~/.proxer/bin" >> "$rc_file"
+        echo "export PATH=\$PATH:~/.proxer-cli/bin" >> "$rc_file"
         source "$rc_file"
         echo "Updated $rc_file"
     else
@@ -28,18 +28,18 @@ update_path() {
 }
 
 # Fetch the latest release tag from GitHub
-curl "https://api.github.com/repos/doroved/proxer/releases/latest" |
+curl "https://api.github.com/repos/doroved/proxer-cli/releases/latest" |
     grep '"tag_name":' |
     sed -E 's/.*"([^"]+)".*/\1/' |
-    xargs -I {} curl -OL "https://github.com/doroved/proxer/releases/download/"\{\}"/proxer.darwin-${short_arch}.tar.gz"
+    xargs -I {} curl -OL "https://github.com/doroved/proxer-cli/releases/download/"\{\}"/proxer-cli.darwin-${short_arch}.tar.gz"
 
 # Create directory for installation
-mkdir -p ~/.proxer/bin
+mkdir -p ~/.proxer-cli/bin
 
 # Extract and move the files
-tar -xzvf ./proxer.darwin-${short_arch}.tar.gz && \
-    rm -rf ./proxer.darwin-${short_arch}.tar.gz && \
-    mv ./proxer ~/.proxer/bin
+tar -xzvf ./proxer-cli.darwin-${short_arch}.tar.gz && \
+    rm -rf ./proxer-cli.darwin-${short_arch}.tar.gz && \
+    mv ./proxer-cli ~/.proxer-cli/bin
 
 # Check for errors in the previous commands
 if [ $? -ne 0 ]; then
@@ -48,14 +48,14 @@ if [ $? -ne 0 ]; then
 fi
 
 # Check if quarantine attribute exists before trying to remove it
-if xattr ~/.proxer/bin/proxer | grep -q "com.apple.quarantine"; then
-    xattr -d com.apple.quarantine ~/.proxer/bin/proxer
-    echo "Removed quarantine attribute from ~/.proxer/bin/proxer"
+if xattr ~/.proxer-cli/bin/proxer-cli | grep -q "com.apple.quarantine"; then
+    xattr -d com.apple.quarantine ~/.proxer-cli/bin/proxer-cli
+    echo "Removed quarantine attribute from ~/.proxer-cli/bin/proxer-cli"
 fi
 
-# Check if config.json5 exists, if not, create it
-if [ ! -f ~/.proxer/config.json5 ]; then
-    cat <<EOL > ~/.proxer/config.json5
+# Check if config.jsonc exists, if not, create it
+if [ ! -f ~/.proxer-cli/config.jsonc ]; then
+    cat <<EOL > ~/.proxer-cli/config.jsonc
 [
   {
     "name": "Proxer Free [DE] proxerver",
@@ -91,13 +91,13 @@ if [ ! -f ~/.proxer/config.json5 ]; then
   }
 ]
 EOL
-    echo "Created config.json5 in ~/.proxer"
+    echo "Created config.jsonc in ~/.proxer-cli"
 else
-    echo "config.json5 already exists in ~/.proxer"
+    echo "config.jsonc already exists in ~/.proxer-cli"
 fi
 
 # Add to PATH
-export PATH=$PATH:~/.proxer/bin
+export PATH=$PATH:~/.proxer-cli/bin
 
 # Check for shell config files and update PATH
 if [ -f ~/.bashrc ]; then
@@ -109,13 +109,13 @@ elif [ -f ~/.bash_profile ]; then
 fi
 
 # Success message with version
-proxer_version=$(proxer -V)
+proxer_version=$(proxer-cli -V)
 echo "Successfully installed $proxer_version"
 
 # Run the proxer help command
 echo ""
-proxer --help
+proxer-cli --help
 echo ""
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
 echo "Please copy and paste this command into the terminal and press Enter:"
-echo "export PATH=\$PATH:~/.proxer/bin"
+echo "export PATH=\$PATH:~/.proxer-cli/bin"

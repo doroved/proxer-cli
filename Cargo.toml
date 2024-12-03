@@ -1,11 +1,11 @@
 [package]
-name = "proxer"
-version = "0.2.1"
+name = "proxer-cli"
+version = "0.3.0"
 edition = "2021"
 authors = ["doroved"]
-description = "Proxy all macOS network requests with domain-based filtering. Basic spoof DPI for direct connections."
+description = "Proxy TCP traffic on macOS with domain filtering."
 readme = "README.md"
-repository = "https://github.com/doroved/proxer"
+repository = "https://github.com/doroved/proxer-cli"
 license = "MIT OR Apache-2.0"
 keywords = ["proxy", "spoof", "spoofdpi", "macos", "macos-proxy"]
 categories = ["network-programming", "command-line-utilities"]
@@ -13,37 +13,27 @@ categories = ["network-programming", "command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-base64 = "0.22.1"
-# hyper = { version = "1.4.1", features = ["full"] }
-hyper = { version = "0.14", features = ["full"] }
-serde = { version = "1.0.210", features = ["derive"] }
-tokio = { version = "1.40.0", features = ["full"] }
+hyper = { version = "1.5.1", features = ["http1", "http2", "server", "client"] }
+hyper-util = { version = "0.1.10", features = ["tokio"] }
+
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.133"
+
+tokio = { version = "1.42.0", features = ["full"] }
 tokio-native-tls = "0.3.1"
-toml = "0.8.19"
-port_check = "0.2.1"
-signal-hook = "0.3.17"
-signal-hook-tokio = { version = "0.3.1", features = ["futures-v0_3"] }
-futures = "0.3.30"
-wildmatch = "2.3.4"
-json5 = "0.4.1"
-chrono = "0.4.38"
-clap = { version = "4.5.20", features = ["derive"] }
+
+wildmatch = "2.4.0"
+clap = { version = "4.5.21", features = ["derive"] }
 sha2 = "0.10.8"
-lazy_static = "1.5.0"
-# simple-home-dir = "0.4.3"
-hyper-tls = "0.6.0"
-hyper-proxy = "0.9.1"
-# hyper-util = "0.1.9"
-# http-body-util = "0.1.2"
-# bytes = "1.7.2"
-# hyper-tls = "0.5"
-# hyper-proxy = "0.7"
-# Ошибка с этой версией
-# headers = "0.4.0"
-# headers = "0.3.0"
-# reqwest = "0.12.8"
-# hyper-proxy2 = "0.1.0"
-# hyper-http-proxy = "1.0.0"
+base64 = "0.22.1"
+bytes = "1.9.0"
+
+http = "1.2.0"
+http-body-util = "0.1.2"
+
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
 
 [profile.release]
 panic = "abort"   # Strip expensive panic clean-up logic
