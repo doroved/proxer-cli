@@ -18,7 +18,7 @@ fi
 update_path() {
     local rc_file=$1
     if ! grep -q "export PATH=.*proxer-cli/bin" "$rc_file"; then
-        echo "# Proxer" >> "$rc_file"
+        echo "# Proxer-cli" >> "$rc_file"
         echo "export PATH=\$PATH:~/.proxer-cli/bin" >> "$rc_file"
         source "$rc_file"
         echo "Updated $rc_file"
