@@ -53,9 +53,9 @@ if xattr ~/.proxer-cli/bin/proxer-cli | grep -q "com.apple.quarantine"; then
     echo "Removed quarantine attribute from ~/.proxer-cli/bin/proxer-cli"
 fi
 
-# Check if config.jsonc exists, if not, create it
-if [ ! -f ~/.proxer-cli/config.jsonc ]; then
-    cat <<EOL > ~/.proxer-cli/config.jsonc
+# Check if config.json5 exists, if not, create it
+if [ ! -f ~/.proxer-cli/config.json5 ]; then
+    cat <<EOL > ~/.proxer-cli/config.json5
 [
   {
     "name": "Proxer Free [DE] proxerver",
@@ -91,9 +91,9 @@ if [ ! -f ~/.proxer-cli/config.jsonc ]; then
   }
 ]
 EOL
-    echo "Created config.jsonc in ~/.proxer-cli"
+    echo "Created config.json5 in ~/.proxer-cli"
 else
-    echo "config.jsonc already exists in ~/.proxer-cli"
+    echo "config.json5 already exists in ~/.proxer-cli"
 fi
 
 # Add to PATH

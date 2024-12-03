@@ -36,23 +36,23 @@ Usage: proxer-cli [OPTIONS]
 
 Options:
       --port <u16>       Set port for proxer. By default 5555.
-      --config <string>  Path to the configuration file. Example: '/path/to/config.(jsonc|json)'. Default is ~/.proxer-cli/config.jsonc.
+      --config <string>  Path to the configuration file. Example: '/path/to/config.(jsonc|json)'. Default is ~/.proxer-cli/config.json5.
       --token <string>   Secret token to access the HTTP/S proxerver. Must match the token specified in the proxerver configuration.
   -h, --help             Print help
   -V, --version          Print version
 ```
 
-The default configuration file is located in `~/.proxer-cli/config.jsonc`. To edit it, you can quickly open it using the terminal command:
+The default configuration file is located in `~/.proxer-cli/config.json5`. To edit it, you can quickly open it using the terminal command:
 
 ```bash
-open -a TextEdit ~/.proxer-cli/config.jsonc
+open -a TextEdit ~/.proxer-cli/config.json5
 ```
 
 If you want to use your own configuration file, you can specify it at startup using the `--config` flag.
 For example, if you are in a directory with the config, you can run proxer as follows:
 
 ```bash
-proxer-cli --config ./config.jsonc
+proxer-cli --config ./config.json5
 ```
 
 Configuration file structure:
@@ -139,13 +139,13 @@ cargo build --release
 3. Run the Proxer binary with configuration.
 
 ```bash
-./target/release/proxer-cli --config 'config.dev.jsonc'
+./target/release/proxer-cli --config 'config.dev.json5'
 ```
 
 4. Or run it in background process using `nohup`.
 
 ```bash
-nohup ./target/release/proxer-cli --config 'config.dev.jsonc' >/dev/null 2>&1 &
+nohup ./target/release/proxer-cli --config 'config.dev.json5' >/dev/null 2>&1 &
 ```
 
 5. To stop Proxer, run this command.

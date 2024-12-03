@@ -2,5 +2,5 @@
 /src/old
 /src/test.rs
 README_PRIVATE.md
-config.test.jsonc
+config.test.json5
 .DS_Store

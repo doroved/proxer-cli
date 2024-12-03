@@ -49,14 +49,14 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     // Read the config file or use the default one
     let config_path = options.config.unwrap_or_else(|| {
-        tracing::info!("Using default config file ~/.proxer-cli/config.jsonc");
+        tracing::info!("Using default config file ~/.proxer-cli/config.json5");
         let home_dir = std::env::var("HOME").expect("$HOME environment variable not set");
-        format!("{home_dir}/.proxer-cli/config.jsonc")
+        format!("{home_dir}/.proxer-cli/config.json5")
     });
 
     let config = fs::read_to_string(&config_path)
         .unwrap_or_else(|_| panic!("Failed to read config file: {config_path}"));
-    let parsed_config: Vec<ProxyConfig> = serde_json::from_str(&config)
+    let parsed_config: Vec<ProxyConfig> = json5::from_str(&config)
         .unwrap_or_else(|_| panic!("Failed to parse config file: {config_path}"));
     let proxy_config_arc = Arc::new(parsed_config);
 
