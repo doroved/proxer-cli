@@ -744,7 +744,7 @@ dependencies = [
 
 [[package]]
 name = "proxer-cli"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "base64",
  "bytes",
