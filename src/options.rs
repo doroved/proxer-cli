@@ -13,7 +13,7 @@ pub struct Opt {
     #[clap(
         long,
         value_name = "string",
-        help = "Path to the configuration file. Example: '/path/to/config.(jsonc|json)'. Default is ~/.proxer-cli/config.json5."
+        help = "Path to the configuration file. Example: '/path/to/config.(json5|json)'. Default is ~/.proxer-cli/config.json5."
     )]
     pub config: Option<String>,
 

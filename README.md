@@ -36,7 +36,7 @@ Usage: proxer-cli [OPTIONS]
 
 Options:
       --port <u16>       Set port for proxer. By default 5555.
-      --config <string>  Path to the configuration file. Example: '/path/to/config.(jsonc|json)'. Default is ~/.proxer-cli/config.json5.
+      --config <string>  Path to the configuration file. Example: '/path/to/config.(json5|json)'. Default is ~/.proxer-cli/config.json5.
       --token <string>   Secret token to access the HTTP/S proxerver. Must match the token specified in the proxerver configuration.
   -h, --help             Print help
   -V, --version          Print version
