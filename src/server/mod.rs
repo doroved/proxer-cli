@@ -5,6 +5,7 @@ mod proxy;
 mod tunnel;
 mod utils;
 
+use std::net::Ipv4Addr;
 use std::sync::Arc;
 use std::{fs, net::SocketAddr};
 
@@ -77,7 +78,7 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
         std::process::exit(0);
     });
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), port);
     let listener = TcpListener::bind(addr).await?;
     tracing::info!("Listening on {}", addr);
 
