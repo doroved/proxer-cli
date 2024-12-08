@@ -2,6 +2,8 @@
 
 > **Subscribe to us on [Telegram](https://t.me/macproxer) to receive notifications about new versions and updates.**
 
+> Check out the desktop version of [Proxer](https://github.com/doroved/proxer).
+
 Network request proxy manager with host filtering on macOS. Currently works only with IPv4 HTTP(S) proxies.
 
 ![proxer screenshot](screenshot.png)
