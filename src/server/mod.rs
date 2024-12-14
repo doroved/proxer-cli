@@ -55,11 +55,9 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
         format!("{home_dir}/.proxer-cli/config.json5")
     });
 
-    let config = fs::read_to_string(&config_path)
-        .unwrap_or_else(|_| panic!("Failed to read config file: {config_path}"));
-    let parsed_config: Vec<ProxyConfig> = json5::from_str(&config)
-        .unwrap_or_else(|_| panic!("Failed to parse config file: {config_path}"));
-    let proxy_config_arc = Arc::new(parsed_config);
+    let config = fs::read_to_string(&config_path)?;
+    let parsed_config: Vec<ProxyConfig> = json5::from_str(&config)?;
+    let proxy_config = Arc::new(parsed_config);
 
     let port = options.port.unwrap_or(5555);
 
@@ -85,7 +83,7 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
     loop {
         let (stream, _) = listener.accept().await?;
         let io = TokioIo::new(stream);
-        let proxy_config = Arc::clone(&proxy_config_arc);
+        let proxy_config = Arc::clone(&proxy_config);
 
         let service = service_fn(move |req: Request<body::Incoming>| {
             let proxy_config = Arc::clone(&proxy_config);
