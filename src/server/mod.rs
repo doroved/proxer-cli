@@ -42,11 +42,18 @@ pub struct ProxyConfig {
 }
 
 pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
+    // Close all proxer-cli processes
+    terminate_proxer();
+
+    // Parse command-line options
+    let options = Opt::parse();
+
     tracing::info!(
         "Default open connection limit: {:?}",
         rlimit::Resource::NOFILE.get_soft()?
     );
 
+    // Set open connection limit
     let connection_limit = match rlimit::Resource::NOFILE.get() {
         Ok(limit) if limit.0 < 1024 * 10 => {
             tracing::info!("Setting open connection limit to {}", limit.1);
@@ -60,12 +67,6 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let _ = rlimit::setrlimit(rlimit::Resource::NOFILE, connection_limit, rlimit::INFINITY);
-
-    // Close all proxer-cli processes
-    terminate_proxer();
-
-    // Parse command-line options
-    let options = Opt::parse();
 
     // Read the config file or use the default one
     let config_path = options.config.unwrap_or_else(|| {
