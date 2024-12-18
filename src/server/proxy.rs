@@ -29,13 +29,15 @@ pub async fn handle_request(
                             if let Err(e) =
                                 tunnel_via_proxy(upgraded, &addr, proxy, &filter_name).await
                             {
-                                tracing::error!("{addr} → PROXY connection error: {e}");
+                                tracing::error!(
+                                    "\x1B[31m{addr} → PROXY connection error: {e}\x1B[0m"
+                                );
                             };
                         } else if let Err(e) = tunnel_direct(upgraded, &addr).await {
-                            tracing::error!("{addr} → DIRECT connection error: {e}");
+                            tracing::error!("\x1B[31m{addr} → DIRECT connection error: {e}\x1B[0m");
                         }
                     }
-                    Err(e) => tracing::error!("{addr} → UPGRADE error: {e}"),
+                    Err(e) => tracing::error!("\x1B[31m{addr} → UPGRADE error: {e}\x1B[0m"),
                 }
             });
 
@@ -66,7 +68,7 @@ pub async fn handle_request(
 
                 tokio::spawn(async move {
                     if let Err(err) = conn.await {
-                        tracing::error!("Connection failed: {:?}", err);
+                        tracing::error!("\x1B[31mConnection failed: {:?}\x1B[0m", err);
                     }
                 });
 
@@ -74,7 +76,7 @@ pub async fn handle_request(
                 Ok(resp.map(|b| b.boxed()))
             }
             Err(e) => {
-                tracing::error!("{host}:{port} → Failed to connect: {:?}", e);
+                tracing::error!("\x1B[31m{host}:{port} → Failed to connect: {:?}\x1B[0m", e);
                 let mut resp = Response::new(full("Failed to connect to host"));
                 *resp.status_mut() = http::StatusCode::BAD_GATEWAY;
 

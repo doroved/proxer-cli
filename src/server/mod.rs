@@ -48,25 +48,14 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
     // Parse command-line options
     let options = Opt::parse();
 
-    tracing::info!(
-        "Default open connection limit: {:?}",
-        rlimit::Resource::NOFILE.get_soft()?
-    );
-
     // Set open connection limit
-    let connection_limit = match rlimit::Resource::NOFILE.get() {
-        Ok(limit) if limit.0 < 1024 * 10 => {
-            tracing::info!("Setting open connection limit to {}", limit.1);
-            limit.1
-        }
-        Ok(limit) => limit.0,
-        Err(err) => {
-            tracing::error!("Failed to get open connection limit: {}", err);
-            return Err(Box::new(err));
-        }
-    };
-
-    let _ = rlimit::setrlimit(rlimit::Resource::NOFILE, connection_limit, rlimit::INFINITY);
+    let default_connection_limit = rlimit::Resource::NOFILE.get_soft()?;
+    let _ = rlimit::setrlimit(rlimit::Resource::NOFILE, 999999, rlimit::INFINITY);
+    tracing::info!(
+        "Setting open connection limit to {}, default limit is {}",
+        rlimit::Resource::NOFILE.get_soft()?,
+        default_connection_limit
+    );
 
     // Read the config file or use the default one
     let config_path = options.config.unwrap_or_else(|| {
