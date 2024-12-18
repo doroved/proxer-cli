@@ -42,6 +42,25 @@ pub struct ProxyConfig {
 }
 
 pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
+    tracing::info!(
+        "Default open connection limit: {:?}",
+        rlimit::Resource::NOFILE.get_soft()?
+    );
+
+    let connection_limit = match rlimit::Resource::NOFILE.get() {
+        Ok(limit) if limit.0 < 1024 * 10 => {
+            tracing::info!("Setting open connection limit to {}", limit.1);
+            limit.1
+        }
+        Ok(limit) => limit.0,
+        Err(err) => {
+            tracing::error!("Failed to get open connection limit: {}", err);
+            return Err(Box::new(err));
+        }
+    };
+
+    let _ = rlimit::setrlimit(rlimit::Resource::NOFILE, connection_limit, rlimit::INFINITY);
+
     // Close all proxer-cli processes
     terminate_proxer();
 
@@ -82,7 +101,6 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
         let (stream, _) = listener.accept().await?;
-        let io = TokioIo::new(stream);
         let proxy_config = Arc::clone(&proxy_config);
 
         let service = service_fn(move |req: Request<body::Incoming>| {
@@ -94,7 +112,7 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
             if let Err(err) = http1::Builder::new()
                 .preserve_header_case(true)
                 .title_case_headers(true)
-                .serve_connection(io, service)
+                .serve_connection(TokioIo::new(stream), service)
                 .with_upgrades()
                 .await
             {

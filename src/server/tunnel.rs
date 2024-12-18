@@ -29,8 +29,13 @@ pub async fn tunnel_direct(
 ) -> Result<(), Box<dyn std::error::Error>> {
     tracing::info!("{addr} → DIRECT connection");
 
-    let mut server = TcpStream::connect(&addr).await?;
-    let _ = tokio::io::copy_bidirectional(&mut TokioIo::new(upgraded), &mut server).await?;
+    let mut server = timeout(Duration::from_secs(30), TcpStream::connect(&addr)).await??;
+
+    timeout(
+        Duration::from_secs(30),
+        tokio::io::copy_bidirectional(&mut TokioIo::new(upgraded), &mut server),
+    )
+    .await??;
 
     Ok(())
 }
@@ -52,14 +57,13 @@ pub async fn tunnel_via_proxy(
     let proxy_addr = format!("{}:{}", &proxy.host, &proxy.port);
     let proxy_host = proxy_addr.split(':').next().unwrap();
 
-    let tcp = TcpStream::connect(&proxy_addr).await?;
-    let mut upgraded = TokioIo::new(upgraded);
+    let tcp = timeout(Duration::from_secs(30), TcpStream::connect(&proxy_addr)).await??;
 
     let mut stream: Pin<Box<dyn AsyncReadWrite>> = if proxy.scheme.eq_ignore_ascii_case("http") {
         Box::pin(tcp)
     } else {
-        let tls = TlsConnector::from(native_tls::TlsConnector::new().unwrap());
-        Box::pin(tls.connect(proxy_host, tcp).await?)
+        let tls = TlsConnector::from(native_tls::TlsConnector::new()?);
+        Box::pin(timeout(Duration::from_secs(30), tls.connect(proxy_host, tcp)).await??)
     };
 
     let mut connect_req = format!(
@@ -100,14 +104,19 @@ pub async fn tunnel_via_proxy(
         return Err(format!("{:?}", String::from_utf8_lossy(&response[..n])).into());
     }
 
-    let (from_client, from_server) =
-        tokio::io::copy_bidirectional(&mut upgraded, &mut stream).await?;
+    let (from_client, from_server) = timeout(
+        Duration::from_secs(30),
+        tokio::io::copy_bidirectional(&mut TokioIo::new(upgraded), &mut stream),
+    )
+    .await??;
 
     tracing::info!(
         "{addr} → Client wrote {:.2} KB and received {:.2} KB",
         from_client as f64 / 1024.0,
         from_server as f64 / 1024.0
     );
+
+    stream.shutdown().await?;
 
     Ok(())
 }

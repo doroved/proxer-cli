@@ -58,12 +58,10 @@ pub async fn handle_request(
 
         match TcpStream::connect((host, port)).await {
             Ok(stream) => {
-                let io = TokioIo::new(stream);
-
                 let (mut sender, conn) = Builder::new()
                     .preserve_header_case(true)
                     .title_case_headers(true)
-                    .handshake(io)
+                    .handshake(TokioIo::new(stream))
                     .await?;
 
                 tokio::spawn(async move {
