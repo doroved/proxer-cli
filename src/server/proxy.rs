@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use super::ProxyConfig;
 use crate::server::tunnel::{tunnel_direct, tunnel_via_proxy};
+use crate::server::utils::tracing_error;
 
 use bytes::Bytes;
 use http::{Method, Request, Response};
@@ -29,21 +30,19 @@ pub async fn handle_request(
                             if let Err(e) =
                                 tunnel_via_proxy(upgraded, &addr, proxy, &filter_name).await
                             {
-                                tracing::error!(
-                                    "\x1B[31m{addr} → PROXY connection error: {e}\x1B[0m"
-                                );
+                                tracing_error(&format!("{addr} → PROXY connection error: {e}"));
                             };
                         } else if let Err(e) = tunnel_direct(upgraded, &addr).await {
-                            tracing::error!("\x1B[31m{addr} → DIRECT connection error: {e}\x1B[0m");
+                            tracing_error(&format!("{addr} → DIRECT connection error: {e}"));
                         }
                     }
-                    Err(e) => tracing::error!("\x1B[31m{addr} → UPGRADE error: {e}\x1B[0m"),
+                    Err(e) => tracing_error(&format!("{addr} → UPGRADE error: {e}")),
                 }
             });
 
             Ok(Response::new(empty()))
         } else {
-            tracing::error!("CONNECT host is not socket addr: {:?}", req.uri());
+            tracing_error(&format!("CONNECT host is not socket addr: {:?}", req.uri()));
             let mut resp = Response::new(full("CONNECT must be to a socket address"));
             *resp.status_mut() = http::StatusCode::BAD_REQUEST;
 
@@ -68,15 +67,16 @@ pub async fn handle_request(
 
                 tokio::spawn(async move {
                     if let Err(err) = conn.await {
-                        tracing::error!("\x1B[31mConnection failed: {:?}\x1B[0m", err);
+                        tracing_error(&format!("Connection failed: {:?}", err));
                     }
                 });
 
                 let resp = sender.send_request(req).await?;
                 Ok(resp.map(|b| b.boxed()))
             }
-            Err(e) => {
-                tracing::error!("\x1B[31m{host}:{port} → Failed to connect: {:?}\x1B[0m", e);
+            Err(err) => {
+                tracing_error(&format!("{host}:{port} → Failed to connect: {:?}", err));
+
                 let mut resp = Response::new(full("Failed to connect to host"));
                 *resp.status_mut() = http::StatusCode::BAD_GATEWAY;
 

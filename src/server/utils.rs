@@ -15,3 +15,7 @@ pub fn terminate_proxer() {
             "Failed to execute `kill $(pgrep proxer-cli)` command to terminate proxer processes",
         );
 }
+
+pub fn tracing_error(message: &str) {
+    tracing::error!("\x1B[31m{message}\x1B[0m");
+}
