@@ -16,7 +16,7 @@ use hyper_util::rt::TokioIo;
 use serde::{Deserialize, Serialize};
 use system_proxy::{ProxyState, SystemProxy};
 use tokio::net::TcpListener;
-use utils::terminate_proxer;
+use utils::{terminate_proxer, tracing_error};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AuthCredentials {
@@ -48,14 +48,21 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
     // Parse command-line options
     let options = Opt::parse();
 
-    // Set open connection limit
-    let default_connection_limit = rlimit::Resource::NOFILE.get_soft()?;
-    let _ = rlimit::setrlimit(rlimit::Resource::NOFILE, 999999, rlimit::INFINITY);
     tracing::info!(
-        "Setting open connection limit to {}, default limit is {}",
-        rlimit::Resource::NOFILE.get_soft()?,
-        default_connection_limit
+        "Default connection limit (soft, hard): {:?}",
+        rlimit::Resource::NOFILE.get()?
     );
+
+    // Set max open connection limit
+    match rlimit::increase_nofile_limit(rlimit::INFINITY) {
+        Ok(limit) => {
+            tracing::info!("Setting max open connection limit to {}", limit);
+        }
+        Err(e) => {
+            tracing::error!("\x1B[31mFailed to increase the open connection limit: {e}\x1B[0m");
+            std::process::exit(1);
+        }
+    }
 
     // Read the config file or use the default one
     let config_path = options.config.unwrap_or_else(|| {
@@ -106,7 +113,7 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .with_upgrades()
                 .await
             {
-                tracing::error!("Server error: {}", err);
+                tracing_error(&format!("Server error: {}", err));
             }
         });
     }
