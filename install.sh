@@ -68,7 +68,7 @@ if [ ! -f ~/.proxer-cli/config.json ]; then
          "username": "proxerver",
          "password": "onelove"
       },
-      "token": "",
+      "token": ""
     },
     "rules": [
       {
