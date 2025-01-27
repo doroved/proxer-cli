@@ -120,9 +120,9 @@ fn find_matching_proxy(
             continue;
         }
 
-        for filter in proxy.filter.iter() {
-            if is_host_allowed(req_host, &filter.domains) {
-                return Some((proxy.clone(), filter.name.clone()));
+        for rule in proxy.rules.iter() {
+            if is_host_allowed(req_host, &rule.hosts) {
+                return Some((proxy.clone(), rule.name.clone()));
             }
         }
     }

@@ -1,10 +1,9 @@
 use std::{pin::Pin, time::Duration};
 
 use super::ProxyConfig;
-use crate::{options::Opt, server::utils::to_sha256};
+use crate::server::utils::to_sha256;
 
 use base64::{engine::general_purpose::STANDARD as b64, Engine as _};
-use clap::Parser;
 
 use hyper::upgrade::Upgraded;
 use hyper_util::rt::TokioIo;
@@ -32,7 +31,7 @@ pub async fn tunnel_direct(
     let mut server = timeout(Duration::from_secs(30), TcpStream::connect(&addr)).await??;
 
     timeout(
-        Duration::from_secs(30),
+        Duration::from_secs(60),
         tokio::io::copy_bidirectional(&mut TokioIo::new(upgraded), &mut server),
     )
     .await??;
@@ -51,8 +50,6 @@ pub async fn tunnel_via_proxy(
         proxy.name,
         proxy.scheme
     );
-
-    let options = Opt::parse();
 
     let proxy_addr = format!("{}:{}", &proxy.host, &proxy.port);
     let proxy_host = proxy_addr.split(':').next().unwrap();
@@ -74,9 +71,10 @@ pub async fn tunnel_via_proxy(
         APP_NAME, APP_VERSION
     );
 
-    // Get the auth credentials from the proxy config
-    let auth_username = proxy.auth_credentials.username.clone();
-    let auth_password = proxy.auth_credentials.password.clone();
+    // Get the auth credentials and token from the proxy config
+    let auth_username = proxy.auth.credentials.username.clone();
+    let auth_password = proxy.auth.credentials.password.clone();
+    let auth_token = proxy.auth.token.clone();
 
     // Add auth credentials to the request if they are provided
     if !auth_username.is_empty() && !auth_password.is_empty() {
@@ -87,12 +85,8 @@ pub async fn tunnel_via_proxy(
     }
 
     // Add token to the request if it is provided
-    if let Some(token) = options.token.as_ref() {
-        if proxy.scheme.eq_ignore_ascii_case("http") {
-            connect_req.push_str(&format!("x-http-secret-token: {}\r\n", to_sha256(token)));
-        } else if proxy.scheme.eq_ignore_ascii_case("https") {
-            connect_req.push_str(&format!("x-https-secret-token: {}\r\n", to_sha256(token)));
-        }
+    if !auth_token.is_empty() {
+        connect_req.push_str(&format!("x-auth-token: {}\r\n", to_sha256(&auth_token)));
     }
 
     connect_req.push_str("\r\n");
@@ -105,7 +99,7 @@ pub async fn tunnel_via_proxy(
     }
 
     let (from_client, from_server) = timeout(
-        Duration::from_secs(30),
+        Duration::from_secs(600),
         tokio::io::copy_bidirectional(&mut TokioIo::new(upgraded), &mut stream),
     )
     .await??;
@@ -115,8 +109,6 @@ pub async fn tunnel_via_proxy(
         from_client as f64 / 1024.0,
         from_server as f64 / 1024.0
     );
-
-    stream.shutdown().await?;
 
     Ok(())
 }

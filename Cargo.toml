@@ -1,6 +1,6 @@
 [package]
 name = "proxer-cli"
-version = "0.3.6"
+version = "0.4.0"
 edition = "2021"
 authors = ["doroved"]
 description = "Proxy TCP traffic on macOS with domain filtering."
@@ -10,20 +10,18 @@ license = "MIT OR Apache-2.0"
 keywords = ["proxy", "spoof", "spoofdpi", "macos", "macos-proxy"]
 categories = ["network-programming", "command-line-utilities"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 hyper = { version = "1.5.2", features = ["http1", "http2", "server", "client"] }
 hyper-util = { version = "0.1.10", features = ["tokio"] }
 
-serde = { version = "1.0.216", features = ["derive"] }
-serde_json = "1.0.133"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.137"
 
-tokio = { version = "1.42.0", features = ["full"] }
+tokio = { version = "1.43.0", features = ["full"] }
 tokio-native-tls = "0.3.1"
 
 wildmatch = "2.4.0"
-clap = { version = "4.5.23", features = ["derive"] }
+clap = { version = "4.5.27", features = ["derive"] }
 sha2 = "0.10.8"
 base64 = "0.22.1"
 bytes = "1.9.0"
@@ -33,7 +31,6 @@ http-body-util = "0.1.2"
 
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-json5 = "0.4.1"
 rlimit = "0.10.2"
 
 

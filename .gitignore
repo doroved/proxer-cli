@@ -1,6 +1,3 @@
 /target
-/src/old
-/src/test.rs
 README_PRIVATE.md
-config.test.json5
 .DS_Store

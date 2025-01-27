@@ -12,7 +12,7 @@ pub fn terminate_proxer() {
         .args(["-c", "kill $(pgrep proxer-cli)"])
         .output()
         .expect(
-            "Failed to execute `kill $(pgrep proxer-cli)` command to terminate proxer processes",
+            "Failed to execute `kill $(pgrep proxer-cli)` command to terminate proxer-cli processes",
         );
 }
 

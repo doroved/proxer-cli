@@ -6,21 +6,14 @@ pub struct Opt {
     #[clap(
         long,
         value_name = "u16",
-        help = "Set port for proxer. By default 5555."
+        help = "Set port for proxer-cli. By default 5555."
     )]
     pub port: Option<u16>,
 
     #[clap(
         long,
         value_name = "string",
-        help = "Path to the configuration file. Example: '/path/to/config.(json5|json)'. Default is ~/.proxer-cli/config.json5."
+        help = "Path to the configuration file. Example: '/path/to/config.json'. Default is ~/.proxer-cli/config.json."
     )]
     pub config: Option<String>,
-
-    #[clap(
-        long,
-        value_name = "string",
-        help = "Secret token to access the HTTP/S proxerver. Must match the token specified in the proxerver configuration."
-    )]
-    pub token: Option<String>,
 }

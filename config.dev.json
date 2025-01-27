@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Proxerver Test",
+    "enabled": true,
+    "scheme": "HTTPS",
+    "host": "proxerver.freemyip.com",
+    "port": 443,
+    "auth": {
+      "credentials": {
+        "username": "",
+        "password": ""
+      },
+      "token": "fe3181d2f5e5e529efa280a474c0e949997c604518624893b1cd0e7c4c8f3727"
+    },
+    "rules": [
+      {
+        "name": "YouTube",
+        "hosts": [
+          "youtu.be",
+          "*.googlevideo.com",
+          "*.youtube.com",
+          "*.ytimg.com",
+          "*.ggpht.com",
+          "*.googleapis.com"
+        ]
+      },
+      {
+        "name": "Discord",
+        "hosts": ["*discord*.*"]
+      },
+      {
+        "name": "Test",
+        "hosts": ["api.ipify.org"]
+      }
+    ]
+  }
+]

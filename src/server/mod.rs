@@ -19,15 +19,21 @@ use tokio::net::TcpListener;
 use utils::{terminate_proxer, tracing_error};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Auth {
+    pub credentials: AuthCredentials,
+    pub token: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AuthCredentials {
     pub username: String,
     pub password: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Filter {
+pub struct Rules {
     pub name: String,
-    pub domains: Vec<String>,
+    pub hosts: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -37,8 +43,8 @@ pub struct ProxyConfig {
     pub scheme: String,
     pub host: String,
     pub port: u16,
-    pub auth_credentials: AuthCredentials,
-    pub filter: Vec<Filter>,
+    pub auth: Auth,
+    pub rules: Vec<Rules>,
 }
 
 pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
@@ -66,13 +72,13 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     // Read the config file or use the default one
     let config_path = options.config.unwrap_or_else(|| {
-        tracing::info!("Using default config file ~/.proxer-cli/config.json5");
+        tracing::info!("Using default config file ~/.proxer-cli/config.json");
         let home_dir = std::env::var("HOME").expect("$HOME environment variable not set");
-        format!("{home_dir}/.proxer-cli/config.json5")
+        format!("{home_dir}/.proxer-cli/config.json")
     });
 
     let config = fs::read_to_string(&config_path)?;
-    let parsed_config: Vec<ProxyConfig> = json5::from_str(&config)?;
+    let parsed_config: Vec<ProxyConfig> = serde_json::from_str(&config)?;
     let proxy_config = Arc::new(parsed_config);
 
     let port = options.port.unwrap_or(5555);
@@ -87,7 +93,7 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
             return;
         }
 
-        tracing::info!("Stopping proxy server");
+        tracing::info!("Stopping proxer-cli");
         system_proxy.set_state(ProxyState::Off);
         std::process::exit(0);
     });

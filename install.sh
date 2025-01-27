@@ -53,47 +53,43 @@ if xattr ~/.proxer-cli/bin/proxer-cli | grep -q "com.apple.quarantine"; then
     echo "Removed quarantine attribute from ~/.proxer-cli/bin/proxer-cli"
 fi
 
-# Check if config.json5 exists, if not, create it
-if [ ! -f ~/.proxer-cli/config.json5 ]; then
-    cat <<EOL > ~/.proxer-cli/config.json5
+# Check if config.json exists, if not, create it
+if [ ! -f ~/.proxer-cli/config.json ]; then
+    cat <<EOL > ~/.proxer-cli/config.json
 [
   {
-    "name": "Proxer Free [DE] proxerver",
+    "name": "Example Configuration",
     "enabled": true,
-    "scheme": "HTTPS",
-    "host": "proxerver.freemyip.com",
-    "port": 443,
-    "auth_credentials": {
-      "username": "proxerver",
-      "password": "onelove"
+    "scheme": "HTTP",
+    "host": "77.111.247.44",
+    "port": 8080,
+    "auth": {
+      "credentials": {
+         "username": "proxerver",
+         "password": "onelove"
+      },
+      "token": "",
     },
-    "filter": [
+    "rules": [
       {
         "name": "YouTube",
-        "domains": ["*.youtube.com", "*.googlevideo.com", "*.ggpht.com", "*.ytimg.com", "youtu.be"]
+        "hosts": ["youtu.be", "*.googlevideo.com", "*.youtube.com", "*.ytimg.com", "*.ggpht.com", "*.googleapis.com"]
       },
       {
         "name": "Discord",
-        "domains": [
-          "discord.com",
-          "*.discord.com",
-          "*.discordapp.com",
-          "discord-attachments-*.storage.googleapis.com",
-          "*.discordapp.net",
-          "gateway.discord.gg"
-        ]
+        "hosts": ["*discord*.*"]
       },
       {
         "name": "Test",
-        "domains": ["api.ipify.org"]
+        "hosts": ["api.ipify.org"]
       }
     ]
   }
 ]
 EOL
-    echo "Created config.json5 in ~/.proxer-cli"
+    echo "Created config.json in ~/.proxer-cli"
 else
-    echo "config.json5 already exists in ~/.proxer-cli"
+    echo "config.json already exists in ~/.proxer-cli"
 fi
 
 # Add to PATH
@@ -109,7 +105,7 @@ elif [ -f ~/.bash_profile ]; then
 fi
 
 # Success message with version
-proxer_version=$(proxer-cli -V)
+proxer_version=$(proxer-cli --version)
 echo "Successfully installed $proxer_version"
 
 # Run the proxer help command
